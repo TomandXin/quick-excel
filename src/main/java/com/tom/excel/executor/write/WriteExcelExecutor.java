@@ -1,5 +1,6 @@
 package com.tom.excel.executor.write;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import com.tom.excel.context.WriteExcelContext;
 import com.tom.excel.domain.BaseModel;
 import org.apache.commons.beanutils.BeanUtils;
@@ -16,6 +17,17 @@ import java.util.Map;
 public class WriteExcelExecutor implements WriteExcelBaseExecutor {
 
 
+    private List<? extends BaseModel> models;
+
+    /**
+     * Write Excel Executor Construct
+     *
+     * @param models
+     */
+    public WriteExcelExecutor(List<? extends BaseModel> models) {
+        this.models = models;
+    }
+
     /**
      * Write Content To Excel
      *
@@ -26,7 +38,6 @@ public class WriteExcelExecutor implements WriteExcelBaseExecutor {
     public boolean write(WriteExcelContext excelContext) {
         try {
             Sheet sheet = excelContext.getSheet();
-            List<? extends BaseModel> models = excelContext.getModels();
             Map<Integer, String> fieldMap = excelContext.getFieldMap();
             for (int index = 0, rowNum = 1; index < models.size(); ++index) {
                 Object model = models.get(index);

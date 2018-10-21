@@ -68,10 +68,10 @@ public class WriteExcelContext implements ExcelContext {
      * construct method
      *
      * @param outputStream
-     * @param models
+     * @param modelClazz
      * @param excelTypeEnum
      */
-    public WriteExcelContext(OutputStream outputStream, List<? extends BaseModel> models, ExcelTypeEnum excelTypeEnum, Class<?> modelClazz) {
+    public WriteExcelContext(OutputStream outputStream, ExcelTypeEnum excelTypeEnum, Class<?> modelClazz) {
         this.excelOutputStream = outputStream;
         this.models = models;
         this.excelTypeEnum = excelTypeEnum;
