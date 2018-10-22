@@ -27,10 +27,18 @@ public class WriteExcelBuilder {
 
     private WriteExcelExecutor writeExcelExecutor;
 
+    /**
+     * init method
+     */
     public void init() {
         writeExcelContext = new WriteExcelContext(outputStream, excelTypeEnum, modelClazz);
     }
 
+    /**
+     * write content to Excel
+     *
+     * @param models
+     */
     public void write(List<? extends BaseModel> models) {
 
         writeExcelExecutor = new WriteExcelExecutor(models);
@@ -38,5 +46,17 @@ public class WriteExcelBuilder {
         writeExcelExecutor.write(writeExcelContext);
 
         writeExcelExecutor.postProcess(writeExcelContext);
+    }
+
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
+    }
+
+    public void setExcelTypeEnum(ExcelTypeEnum excelTypeEnum) {
+        this.excelTypeEnum = excelTypeEnum;
+    }
+
+    public void setModelClazz(Class<?> modelClazz) {
+        this.modelClazz = modelClazz;
     }
 }
