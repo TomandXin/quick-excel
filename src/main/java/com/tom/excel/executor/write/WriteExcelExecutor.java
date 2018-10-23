@@ -3,6 +3,7 @@ package com.tom.excel.executor.write;
 import com.sun.xml.internal.rngom.parse.host.Base;
 import com.tom.excel.context.WriteExcelContext;
 import com.tom.excel.domain.BaseModel;
+import com.tom.excel.exceptions.ExcelExceptionFactory;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -49,11 +50,11 @@ public class WriteExcelExecutor implements WriteExcelBaseExecutor {
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new RuntimeException();
+            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException();
+            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException();
+            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
 
         return true;

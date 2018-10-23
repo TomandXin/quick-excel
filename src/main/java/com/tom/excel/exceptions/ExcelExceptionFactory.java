@@ -25,6 +25,6 @@ public class ExcelExceptionFactory {
      * @return
      */
     public static RuntimeException wrapException(String message, Exception exception) {
-        return new ExcelException(message,exception);
+        return new ExcelException(message, exception);
     }
 }
