@@ -7,7 +7,7 @@ package com.tom.excel.executor.read;
  * @date 2018-10-14
  * @since v1.0.0
  */
-public interface ReadExcelExecutor {
+public interface ReadExcelBaseExecutor {
 
     /**
      * parse excel content
