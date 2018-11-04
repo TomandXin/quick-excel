@@ -1,6 +1,8 @@
 package com.tom.excel.sax;
 
+import com.tom.excel.executor.read.InstanceSubject;
 import com.tom.excel.executor.read.ReadObserver;
+import com.tom.excel.executor.read.SaxExcelObserver;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -61,12 +63,18 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     private static Pattern ROW_PATTERN = Pattern.compile("[^0-9]");
 
     /**
+     * 实例化目标
+     */
+    private InstanceSubject instanceSubject;
+
+    /**
      * destruct method
      *
      * @param sharedStringsTable
      */
-    public ReadExcelSaxHandler(SharedStringsTable sharedStringsTable) {
+    public ReadExcelSaxHandler(SharedStringsTable sharedStringsTable,InstanceSubject instanceSubject) {
         this.sharedStringsTable = sharedStringsTable;
+        this.instanceSubject = instanceSubject;
     }
 
     /**
@@ -132,7 +140,8 @@ public class ReadExcelSaxHandler extends DefaultHandler {
 
             } else {
                 // 直接解析
-
+                instanceSubject.notifyObserver(rowContents);
+                // 重新初始化rowContents
                 rowContents = new String[36];
             }
 

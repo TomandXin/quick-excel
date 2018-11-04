@@ -1,5 +1,7 @@
 package com.tom.excel.executor.read;
 
+import com.tom.excel.context.ReadExcelContext;
+
 import java.io.InputStream;
 
 /**
@@ -14,8 +16,8 @@ public interface ReadExcelBaseExecutor {
     /**
      * parse excel content
      *
-     * @param inputStream
+     * @param readExcelContext
      * @return
      */
-    public void parse(InputStream inputStream);
+    public void parse(ReadExcelContext readExcelContext);
 }

@@ -1,5 +1,6 @@
 package com.tom.excel.executor.read;
 
+import com.tom.excel.context.ReadExcelContext;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
 import com.tom.excel.sax.ReadSaxFactory;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -27,13 +28,13 @@ public class ReadExcelExecutor implements ReadExcelBaseExecutor {
     /**
      * 解析实体类
      *
-     * @param inputStream
+     * @param readExcelContext
      * @return
      */
     @Override
-    public void parse(InputStream inputStream) {
+    public void parse(ReadExcelContext readExcelContext) {
         try {
-            OPCPackage opcPackage = OPCPackage.open(inputStream);
+            OPCPackage opcPackage = OPCPackage.open(readExcelContext.getInputStream());
             XSSFReader xssfReader = new XSSFReader(opcPackage);
             //
             SharedStringsTable sharedStringsTable = xssfReader.getSharedStringsTable();

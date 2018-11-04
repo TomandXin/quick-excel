@@ -3,6 +3,7 @@ package com.tom.excel.context;
 import com.tom.excel.domain.BaseModel;
 import com.tom.excel.enums.ExcelTypeEnum;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -15,5 +16,15 @@ import java.util.List;
  */
 public class ReadExcelContext implements ExcelContext{
 
+    private InputStream inputStream;
 
+    private Object targetObject;
+
+    public InputStream getInputStream() {
+        return this.inputStream;
+    }
+
+    public Object getTargetObject() {
+        return this.targetObject;
+    }
 }
