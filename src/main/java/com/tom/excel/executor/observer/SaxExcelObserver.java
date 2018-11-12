@@ -1,11 +1,9 @@
-package com.tom.excel.executor.read;
+package com.tom.excel.executor.observer;
 
 import com.tom.excel.annotations.ExcelReadProperty;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
-import com.tom.excel.strategy.Strategy;
 import org.apache.commons.beanutils.BeanUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,7 +15,7 @@ import java.lang.reflect.Method;
  * @date 2018-11-04
  * @since v1.0.0
  */
-public class SaxExcelObserver implements ExcelObserver {
+public class SaxExcelObserver{
 
     private Object targetObject;
 
@@ -30,7 +28,6 @@ public class SaxExcelObserver implements ExcelObserver {
      *
      * @param rowContents
      */
-    @Override
     public void instance(String[] rowContents) {
         Class<?> targetClazz = targetObject.getClass();
         // 属性列表
