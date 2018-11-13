@@ -13,4 +13,12 @@ public class EventMessage {
      * Excel中每行的内容
      */
     private String[] rowContents;
+
+    public String[] getRowContents() {
+        return rowContents;
+    }
+
+    public void setRowContents(String[] rowContents) {
+        this.rowContents = rowContents;
+    }
 }

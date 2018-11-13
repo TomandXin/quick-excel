@@ -10,8 +10,6 @@ import java.util.concurrent.*;
 
 public class EventFactory {
 
-    private static Set<Class<?>> registerList = new HashSet<>(32);
-
     private static BlockingQueue<EventMessage> eventQueue = new LinkedBlockingQueue<>(256);
 
     private static Map<Method, Object> methodObjectMap = new ConcurrentHashMap<>(32);
@@ -19,29 +17,19 @@ public class EventFactory {
     /**
      * 观察者通过该接口注册事件
      *
-     * @param clazz
+     * @param observer
      */
-    public static void register(Class<?> clazz) {
-        registerList.add(clazz);
-        Object target = null;
-        try {
-            target = clazz.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    public static void register(Object observer) {
         // 判空
-        if (null == target) {
-            return;
+        if (null == observer) {
+            throw new NullPointerException("observer is null");
         }
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
+        for (Method method : observer.getClass().getMethods()) {
             // 判断方法是否包含EventReceiver的注解
             if (!method.isAnnotationPresent(EventReceiver.class)) {
                 continue;
             }
-            methodObjectMap.putIfAbsent(method, target);
+            methodObjectMap.putIfAbsent(method, observer);
         }
     }
 
@@ -51,10 +39,10 @@ public class EventFactory {
      * @param eventMessage
      */
     public static void notify(EventMessage eventMessage) {
-
+        // 先放入到阻塞队列中
         eventQueue.add(eventMessage);
 
-        EventMessage message = new EventMessage();
+        EventMessage message;
         try {
             while ((message = eventQueue.poll()) != null) {
                 for (Method method : methodObjectMap.keySet()) {

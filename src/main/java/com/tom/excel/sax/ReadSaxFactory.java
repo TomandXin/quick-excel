@@ -2,7 +2,6 @@ package com.tom.excel.sax;
 
 import com.tom.excel.context.ReadExcelContext;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
-import com.tom.excel.executor.observer.InstanceSubject;
 import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.xml.sax.SAXException;
@@ -28,8 +27,7 @@ public class ReadSaxFactory {
      */
     public static XMLReader fetchSheetParser(SharedStringsTable sharedStringsTable, ReadExcelContext readExcelContext) {
         try {
-            InstanceSubject instanceSubject = new InstanceSubject();
-            ReadExcelSaxHandler handler = new ReadExcelSaxHandler(sharedStringsTable, instanceSubject);
+            ReadExcelSaxHandler handler = new ReadExcelSaxHandler(sharedStringsTable);
             XMLReader xmlReader = SAXHelper.newXMLReader();
             xmlReader.setContentHandler(handler);
             return xmlReader;

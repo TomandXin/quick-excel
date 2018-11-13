@@ -19,5 +19,5 @@ public interface ReadExcelBaseExecutor {
      * @param readExcelContext
      * @return
      */
-    public void parse(ReadExcelContext readExcelContext);
+    void parse(ReadExcelContext readExcelContext);
 }

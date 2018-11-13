@@ -1,10 +1,12 @@
 package com.tom.excel.executor.observer;
 
-import com.tom.excel.annotations.ExcelReadProperty;
+import com.tom.excel.annotations.EventReceiver;
+import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
+import com.tom.excel.executor.observer.model.EventMessage;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -15,40 +17,48 @@ import java.lang.reflect.Method;
  * @date 2018-11-04
  * @since v1.0.0
  */
-public class SaxExcelObserver{
+public class SaxExcelObserver {
 
-    private Object targetObject;
+    private ClassMeta classMeta;
 
-    public SaxExcelObserver(Object targetObject) {
-        this.targetObject = targetObject;
+    public SaxExcelObserver(ClassMeta classMeta) {
+        this.classMeta = classMeta;
+        // 事件监听注册
+        EventFactory.register(this);
     }
 
     /**
      * 根据从Excel文件中读取的每行的内容事例化实体类
      *
-     * @param rowContents
+     * @param eventMessage
      */
-    public void instance(String[] rowContents) {
-        Class<?> targetClazz = targetObject.getClass();
-        // 属性列表
-        Field[] fields = targetClazz.getFields();
+    @EventReceiver
+    public void instance(EventMessage eventMessage) {
+        // 解析出的Excel内容
+        String[] rowContents = eventMessage.getRowContents();
         try {
-            for (Field field : fields) {
-                // 判断是否有注解
-                if (!field.isAnnotationPresent(ExcelReadProperty.class)) {
+            for (int index = 0; index < rowContents.length; ++index) {
+                String content = rowContents[index];
+                // 判空
+                if (StringUtils.isEmpty(content)) {
                     continue;
                 }
-                ExcelReadProperty excelReadProperty = field.getAnnotation(ExcelReadProperty.class);
-                // 根据需要判断每个属性对应的序列号
-                Class<?> strategyClazz = excelReadProperty.parseStrategy();
-                Class<?>[] parameters = new Class<?>[]{String.class};
-                Method method = strategyClazz.getMethod("parse", parameters);
-                Object valueResult = method.invoke(strategyClazz.newInstance(), rowContents[1]);
+                String fieldName = classMeta.getFieldNameMap().get(index);
+                // 判空
+                if (StringUtils.isEmpty(fieldName)) {
+                    continue;
+                }
+                Method strategyMethod = classMeta.getStrategyMethodMap().get(fieldName);
+                Class<?> strategyClazz = classMeta.getStrategyClassMap().get(fieldName);
+                // 如果没有对应的解析策略，则直接将content赋值该对应的Filed属性
+                if (null == strategyClazz || null == strategyMethod) {
+                    BeanUtils.setProperty(classMeta.getTarget(), fieldName, content);
+                    continue;
+                }
+                Object valueResult = strategyMethod.invoke(strategyClazz.newInstance(), content);
                 // 属性赋值
-                BeanUtils.setProperty(targetObject,field.getName(),valueResult);
+                BeanUtils.setProperty(classMeta.getTarget(), fieldName, valueResult);
             }
-        } catch (NoSuchMethodException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (InstantiationException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (IllegalAccessException e) {

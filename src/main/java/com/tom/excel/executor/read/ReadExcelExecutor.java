@@ -38,7 +38,7 @@ public class ReadExcelExecutor implements ReadExcelBaseExecutor {
             XSSFReader xssfReader = new XSSFReader(opcPackage);
             //
             SharedStringsTable sharedStringsTable = xssfReader.getSharedStringsTable();
-            XMLReader xmlReader = ReadSaxFactory.fetchSheetParser(sharedStringsTable);
+            XMLReader xmlReader = ReadSaxFactory.fetchSheetParser(sharedStringsTable, readExcelContext);
 
             Iterator<InputStream> sheets = xssfReader.getSheetsData();
             while (sheets.hasNext()){

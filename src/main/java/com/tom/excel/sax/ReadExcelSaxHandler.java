@@ -1,6 +1,7 @@
 package com.tom.excel.sax;
 
-import com.tom.excel.executor.observer.InstanceSubject;
+import com.tom.excel.executor.observer.EventFactory;
+import com.tom.excel.executor.observer.model.EventMessage;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -60,19 +61,14 @@ public class ReadExcelSaxHandler extends DefaultHandler {
      */
     private static Pattern ROW_PATTERN = Pattern.compile("[^0-9]");
 
-    /**
-     * 实例化目标
-     */
-    private InstanceSubject instanceSubject;
 
     /**
      * destruct method
      *
      * @param sharedStringsTable
      */
-    public ReadExcelSaxHandler(SharedStringsTable sharedStringsTable,InstanceSubject instanceSubject) {
+    public ReadExcelSaxHandler(SharedStringsTable sharedStringsTable) {
         this.sharedStringsTable = sharedStringsTable;
-        this.instanceSubject = instanceSubject;
     }
 
     /**
@@ -137,13 +133,22 @@ public class ReadExcelSaxHandler extends DefaultHandler {
                 // 判断是标题栏
 
             } else {
-                // 直接解析
-                instanceSubject.notifyObserver(rowContents);
+                // 发送通知
+                publishContent();
                 // 重新初始化rowContents
                 rowContents = new String[36];
             }
 
         }
+    }
+
+    /**
+     * 发送内容到注册中心
+     */
+    private void publishContent() {
+        EventMessage eventMessage = new EventMessage();
+        eventMessage.setRowContents(rowContents);
+        EventFactory.notify(eventMessage);
     }
 
     /**
