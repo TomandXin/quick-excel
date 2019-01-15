@@ -3,12 +3,14 @@ package com.tom.excel.executor.observer;
 import com.tom.excel.annotations.EventReceiver;
 import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
-import com.tom.excel.executor.observer.model.EventMessage;
+import com.tom.excel.domain.EventMessage;
+import com.tom.excel.executor.read.ExcelEventListener;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * SAX模式下读取Excel文件内容的观察者
@@ -17,11 +19,13 @@ import java.lang.reflect.Method;
  * @date 2018-11-04
  * @since v1.0.0
  */
-public class SaxExcelObserver {
+public class ParseMessageReceiver {
 
     private ClassMeta classMeta;
 
-    public SaxExcelObserver(ClassMeta classMeta) {
+    private ExcelEventListener excelEventListener;
+
+    public ParseMessageReceiver(ClassMeta classMeta) {
         this.classMeta = classMeta;
         // 事件监听注册
         EventFactory.register(this);
@@ -35,10 +39,10 @@ public class SaxExcelObserver {
     @EventReceiver
     public void instance(EventMessage eventMessage) {
         // 解析出的Excel内容
-        String[] rowContents = eventMessage.getRowContents();
+        Map<Integer, String> rowContentMap = eventMessage.getRowContentMap();
         try {
-            for (int index = 0; index < rowContents.length; ++index) {
-                String content = rowContents[index];
+            for (Integer index : rowContentMap.keySet()) {
+                String content = rowContentMap.get(index);
                 // 判空
                 if (StringUtils.isEmpty(content)) {
                     continue;
@@ -66,5 +70,9 @@ public class SaxExcelObserver {
         } catch (InvocationTargetException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
+    }
+
+    public void setExcelEventListener(ExcelEventListener excelEventListener) {
+        this.excelEventListener = excelEventListener;
     }
 }

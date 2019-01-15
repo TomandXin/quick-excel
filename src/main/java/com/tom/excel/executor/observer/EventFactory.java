@@ -1,7 +1,7 @@
 package com.tom.excel.executor.observer;
 
 import com.tom.excel.annotations.EventReceiver;
-import com.tom.excel.executor.observer.model.EventMessage;
+import com.tom.excel.domain.EventMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

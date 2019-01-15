@@ -1,7 +1,7 @@
 package com.tom.excel.sax;
 
 import com.tom.excel.executor.observer.EventFactory;
-import com.tom.excel.executor.observer.model.EventMessage;
+import com.tom.excel.domain.EventMessage;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.model.SharedStringsTable;
