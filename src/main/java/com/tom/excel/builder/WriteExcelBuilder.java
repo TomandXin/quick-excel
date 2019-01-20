@@ -3,7 +3,7 @@ package com.tom.excel.builder;
 import com.tom.excel.context.WriteExcelContext;
 import com.tom.excel.domain.BaseModel;
 import com.tom.excel.enums.ExcelTypeEnum;
-import com.tom.excel.executor.write.WriteExcelExecutor;
+import com.tom.excel.executor.write.WriteExcelBaseExecutor;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -25,7 +25,7 @@ public class WriteExcelBuilder {
 
     private Class<?> modelClazz;
 
-    private WriteExcelExecutor writeExcelExecutor;
+    private WriteExcelBaseExecutor writeExcelExecutor;
 
     /**
      * init method
@@ -34,19 +34,10 @@ public class WriteExcelBuilder {
         writeExcelContext = new WriteExcelContext(outputStream, excelTypeEnum, modelClazz);
     }
 
-    /**
-     * write content to Excel
-     *
-     * @param models
-     */
     public void write(List<? extends BaseModel> models) {
-
-        writeExcelExecutor = new WriteExcelExecutor(models);
-
-        writeExcelExecutor.write(writeExcelContext);
-
-        writeExcelExecutor.postProcess(writeExcelContext);
+        writeExcelContext.write(models);
     }
+
 
     public void setOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;

@@ -4,6 +4,10 @@ package com.tom.excel.context;
 import com.tom.excel.annotations.ExcelWriteProperty;
 import com.tom.excel.domain.BaseModel;
 import com.tom.excel.enums.ExcelTypeEnum;
+import com.tom.excel.exceptions.ExcelExceptionFactory;
+import com.tom.excel.executor.write.WriteExcelBaseExecutor;
+import com.tom.excel.executor.write.WriteV3ExcelExecutor;
+import com.tom.excel.executor.write.WriteV7ExcelExecutor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -23,11 +27,6 @@ import java.util.Map;
  * @since v1.0.0
  */
 public class WriteExcelContext implements ExcelContext {
-
-    /**
-     * Model List
-     */
-    private List<? extends BaseModel> models;
 
     /**
      * Excel OutputStream
@@ -64,6 +63,10 @@ public class WriteExcelContext implements ExcelContext {
      */
     private Workbook workbook;
 
+    private WriteExcelBaseExecutor writeExcelBaseExecutor;
+
+    private List<? extends BaseModel> models;
+
     /**
      * construct method
      *
@@ -73,7 +76,6 @@ public class WriteExcelContext implements ExcelContext {
      */
     public WriteExcelContext(OutputStream outputStream, ExcelTypeEnum excelTypeEnum, Class<?> modelClazz) {
         this.excelOutputStream = outputStream;
-        this.models = models;
         this.excelTypeEnum = excelTypeEnum;
         this.modelClazz = modelClazz;
 
@@ -81,32 +83,32 @@ public class WriteExcelContext implements ExcelContext {
     }
 
     private void initWriteExcelContext() {
-
+        // 初始化Excel Sheet
         initExcelSheet();
-
+        // 初始化Field Map
         initFieldMap();
-
-
     }
 
     private void initExcelSheet() {
 
-        if (ExcelTypeEnum.isXls(excelTypeEnum)) {
+        if (ExcelTypeEnum.isXlsx(excelTypeEnum)) {
             workbook = new HSSFWorkbook();
             sheet = workbook.createSheet();
+            writeExcelBaseExecutor = new WriteV7ExcelExecutor();
             return;
         }
 
-        if (ExcelTypeEnum.isXlsx(excelTypeEnum)) {
+        if (ExcelTypeEnum.isXls(excelTypeEnum)) {
             workbook = new XSSFWorkbook();
             sheet = workbook.createSheet();
+            writeExcelBaseExecutor = new WriteV3ExcelExecutor();
         }
     }
 
     private void initFieldMap() {
-        // is assignable from BaseModel.class
-        if (!modelClazz.isAssignableFrom(BaseModel.class)) {
-            throw new RuntimeException();
+        // 判断该类是否继承了BaseModel
+        if (!BaseModel.class.isAssignableFrom(modelClazz)) {
+            throw ExcelExceptionFactory.wrapException(modelClazz.getName() + "need extends " + BaseModel.class.getName(), new RuntimeException());
         }
         for (Field field : modelClazz.getFields()) {
             if (!field.isAnnotationPresent(ExcelWriteProperty.class)) {
@@ -118,16 +120,22 @@ public class WriteExcelContext implements ExcelContext {
         }
     }
 
+    /**
+     * 将内容写入Excel
+     *
+     * @param models
+     */
+    public void write(List<? extends BaseModel> models) {
+        this.models = models;
+        writeExcelBaseExecutor.write(this);
+    }
+
     public OutputStream getExcelOutputStream() {
         return this.excelOutputStream;
     }
 
     public ExcelTypeEnum getExcelTypeEnum() {
         return this.excelTypeEnum;
-    }
-
-    public List<? extends BaseModel> getModels() {
-        return this.models;
     }
 
     public Sheet getSheet() {
@@ -140,5 +148,13 @@ public class WriteExcelContext implements ExcelContext {
 
     public Workbook getWorkbook() {
         return workbook;
+    }
+
+    public Map<Integer, String> getColumnMap() {
+        return this.columnMap;
+    }
+
+    public List<? extends BaseModel> getModels() {
+        return this.models;
     }
 }
