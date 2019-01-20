@@ -19,7 +19,7 @@ import java.util.Map;
  * @date 2018-11-04
  * @since v1.0.0
  */
-public class ParseMessageReceiver {
+public class ParseMessageReceiver implements MessageReceiver {
 
     private ClassMeta classMeta;
 
@@ -36,8 +36,7 @@ public class ParseMessageReceiver {
      *
      * @param eventMessage
      */
-    @EventReceiver
-    public void instance(EventMessage eventMessage) {
+    public void invoke(EventMessage eventMessage) {
         // 解析出的Excel内容
         Map<Integer, String> rowContentMap = eventMessage.getRowContentMap();
         try {

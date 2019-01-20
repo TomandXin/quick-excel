@@ -12,25 +12,20 @@ public class EventFactory {
 
     private static BlockingQueue<EventMessage> eventQueue = new LinkedBlockingQueue<>(256);
 
-    private static Map<Method, Object> methodObjectMap = new ConcurrentHashMap<>(32);
+    private static List<MessageReceiver> messageReceiverList = new ArrayList<>(32);
 
     /**
      * 观察者通过该接口注册事件
      *
-     * @param observer
+     * @param messageReceiver
      */
-    public static void register(Object observer) {
+    public static void register(MessageReceiver messageReceiver) {
         // 判空
-        if (null == observer) {
+        if (null == messageReceiver) {
             throw new NullPointerException("observer is null");
         }
-        for (Method method : observer.getClass().getMethods()) {
-            // 判断方法是否包含EventReceiver的注解
-            if (!method.isAnnotationPresent(EventReceiver.class)) {
-                continue;
-            }
-            methodObjectMap.putIfAbsent(method, observer);
-        }
+        // 将MessageReceiver添加到列表中
+        messageReceiverList.add(messageReceiver);
     }
 
     /**
@@ -43,17 +38,10 @@ public class EventFactory {
         eventQueue.add(eventMessage);
 
         EventMessage message;
-        try {
-            while ((message = eventQueue.poll()) != null) {
-                for (Method method : methodObjectMap.keySet()) {
-                    method.invoke(methodObjectMap.get(method), message);
-                }
+        while ((message = eventQueue.poll()) != null) {
+            for (MessageReceiver messageReceiver : messageReceiverList) {
+                messageReceiver.invoke(message);
             }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
         }
-
     }
 }

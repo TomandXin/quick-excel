@@ -9,6 +9,8 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +41,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     /**
      * row's col content
      */
-    private String[] rowContents = new String[36];
+    private Map<Integer, String> rowContentMap = new HashMap<>(36);
 
     /**
      * current column number
@@ -125,7 +127,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
         }
         // 存储坐标
         if (qName.equals("v")) {
-            rowContents[curCol] = lastContents;
+            rowContentMap.put(curCol, lastContents);
         }
         // 标志一行已经解析结束
         if (qName.equals("row")) {
@@ -135,8 +137,8 @@ public class ReadExcelSaxHandler extends DefaultHandler {
             } else {
                 // 发送通知
                 publishContent();
-                // 重新初始化rowContents
-                rowContents = new String[36];
+                // 重新初始化rowContentMap
+                rowContentMap.clear();
             }
 
         }
@@ -147,7 +149,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
      */
     private void publishContent() {
         EventMessage eventMessage = new EventMessage();
-        eventMessage.setRowContents(rowContents);
+        eventMessage.setRowContentMap(rowContentMap);
         EventFactory.notify(eventMessage);
     }
 
