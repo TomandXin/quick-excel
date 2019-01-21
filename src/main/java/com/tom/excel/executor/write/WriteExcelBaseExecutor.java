@@ -19,11 +19,4 @@ public interface WriteExcelBaseExecutor {
      * @return
      */
     boolean write(WriteExcelContext excelContext);
-
-    /**
-     * post process write excel
-     *
-     * @return
-     */
-    boolean postProcess(WriteExcelContext excelContext);
 }

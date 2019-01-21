@@ -2,8 +2,8 @@ package com.tom.excel.builder;
 
 import com.tom.excel.context.WriteExcelContext;
 import com.tom.excel.domain.BaseModel;
+import com.tom.excel.domain.ExcelSheet;
 import com.tom.excel.enums.ExcelTypeEnum;
-import com.tom.excel.executor.write.WriteExcelBaseExecutor;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -23,19 +23,28 @@ public class WriteExcelBuilder {
 
     private WriteExcelContext writeExcelContext;
 
-    private Class<?> modelClazz;
-
-    private WriteExcelBaseExecutor writeExcelExecutor;
-
     /**
      * init method
      */
     public void init() {
-        writeExcelContext = new WriteExcelContext(outputStream, excelTypeEnum, modelClazz);
+        writeExcelContext = new WriteExcelContext(outputStream, excelTypeEnum);
     }
 
-    public void write(List<? extends BaseModel> models) {
-        writeExcelContext.write(models);
+    /**
+     * 将数据写入Excel文件中
+     *
+     * @param models
+     * @param excelSheet
+     */
+    public void write(List<? extends BaseModel> models, ExcelSheet excelSheet) {
+        writeExcelContext.write(models, excelSheet);
+    }
+
+    /**
+     * 将Workbook的内容写入到OutputStream中
+     */
+    public void flush() {
+        writeExcelContext.flush();
     }
 
 
@@ -45,9 +54,5 @@ public class WriteExcelBuilder {
 
     public void setExcelTypeEnum(ExcelTypeEnum excelTypeEnum) {
         this.excelTypeEnum = excelTypeEnum;
-    }
-
-    public void setModelClazz(Class<?> modelClazz) {
-        this.modelClazz = modelClazz;
     }
 }
