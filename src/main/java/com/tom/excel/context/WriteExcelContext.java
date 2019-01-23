@@ -42,11 +42,6 @@ public class WriteExcelContext implements ExcelContext {
     private ExcelTypeEnum excelTypeEnum;
 
     /**
-     * Sheet
-     */
-    private Sheet cloneSheet;
-
-    /**
      * save model's field and field index
      */
     private Map<Integer, String> fieldMap = new HashMap<>(32);
@@ -72,14 +67,14 @@ public class WriteExcelContext implements ExcelContext {
     private List<? extends BaseModel> models;
 
     /**
-     * excel sheet
+     * Sheet元数据
      */
-    private ExcelSheet excelSheet;
+    private SheetMeta sheetMeta;
 
     /**
      * Sheet Map (sheetName,Sheet)
      */
-    private Map<String, SheetMeta> sheetMap = new HashMap<>(8);
+    private static final Map<String, SheetMeta> SHEET_META_MAP = new HashMap<>(8);
 
     private static final String DEFAULT_NAME = "defaultName";
 
@@ -113,12 +108,18 @@ public class WriteExcelContext implements ExcelContext {
     }
 
     /**
-     * 创建Sheet,创建多个Sheet TODO
+     * 创建Sheet,创建多个Sheet
+     *
+     * @param excelSheet
      */
-    private void createSheet() {
+    private void createSheet(ExcelSheet excelSheet) {
+        // 获取Sheet名称
         String sheetName = StringUtils.isEmpty(excelSheet.getSheetName()) ? DEFAULT_NAME : excelSheet.getSheetName();
-        if (null != sheetMap.get(sheetName)) {
-
+        SheetMeta sheetMeta = SHEET_META_MAP.get(sheetName);
+        // 判空
+        if (null != sheetMeta && null != sheetMeta.getSheet()) {
+            this.sheetMeta = sheetMeta;
+            return;
         }
         Sheet sheet;
         if (StringUtils.isEmpty(excelSheet.getSheetName())) {
@@ -126,19 +127,23 @@ public class WriteExcelContext implements ExcelContext {
         } else {
             sheet = workbook.createSheet(excelSheet.getSheetName());
         }
-        SheetMeta sheetMeta = new SheetMeta(sheet, 0, sheetName);
-        sheetMap.put(sheetName, sheetMeta);
-        excelSheet.setSheet(sheet);
-        cloneSheet = sheet;
+        sheetMeta = new SheetMeta(sheet, 0, sheetName, excelSheet.isNeedHeader());
+        SHEET_META_MAP.put(sheetName, sheetMeta);
+        this.sheetMeta = sheetMeta;
     }
 
-    private void initFieldMap() {
+    /**
+     * 初始化属性信息
+     *
+     * @param excelSheet
+     */
+    private void initFieldMap(ExcelSheet excelSheet) {
         Class<? extends BaseModel> modelClazz = excelSheet.getModelClass();
         // 判断该类是否继承了BaseModel
         if (!BaseModel.class.isAssignableFrom(modelClazz)) {
             throw ExcelExceptionFactory.wrapException(modelClazz.getName() + "need extends " + BaseModel.class.getName(), new RuntimeException());
         }
-        for (Field field : modelClazz.getFields()) {
+        for (Field field : modelClazz.getDeclaredFields()) {
             if (!field.isAnnotationPresent(ExcelWriteProperty.class)) {
                 continue;
             }
@@ -156,11 +161,10 @@ public class WriteExcelContext implements ExcelContext {
      */
     public void write(List<? extends BaseModel> models, ExcelSheet excelSheet) {
         this.models = models;
-        this.excelSheet = excelSheet;
         // 创建Sheet
-        createSheet();
+        createSheet(excelSheet);
         // 初始化Field Map
-        initFieldMap();
+        initFieldMap(excelSheet);
 
         writeExcelBaseExecutor.write(this);
     }
@@ -188,7 +192,7 @@ public class WriteExcelContext implements ExcelContext {
         return this.models;
     }
 
-    public ExcelSheet getExcelSheet() {
-        return this.excelSheet;
+    public SheetMeta getSheetMeta() {
+        return this.sheetMeta;
     }
 }

@@ -1,5 +1,7 @@
 package com.tom.excel.domain;
 
+import com.tom.excel.strategy.Strategy;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -28,16 +30,11 @@ public class ClassMeta {
     private Map<Integer, String> fieldNameMap;
 
     /**
-     * Method Map
-     */
-    private Map<String, Method> strategyMethodMap;
-
-    /**
      * strategy class map
      */
-    private Map<String,Class<?>> strategyClassMap;
+    private Map<String, Class<? extends Strategy>> strategyClassMap;
 
-    public Map<String, Class<?>> getStrategyClassMap() {
+    public Map<String, Class<? extends Strategy>> getStrategyClassMap() {
         return strategyClassMap;
     }
 
@@ -53,10 +50,6 @@ public class ClassMeta {
         return this.fieldNameMap;
     }
 
-    public Map<String, Method> getStrategyMethodMap() {
-        return strategyMethodMap;
-    }
-
     public void setClazz(Class<?> clazz) {
         this.clazz = clazz;
     }
@@ -69,11 +62,7 @@ public class ClassMeta {
         this.target = target;
     }
 
-    public void setStrategyMethodMap(Map<String, Method> strategyMethodMap) {
-        this.strategyMethodMap = strategyMethodMap;
-    }
-
-    public void setStrategyClassMap(Map<String, Class<?>> strategyClassMap) {
+    public void setStrategyClassMap(Map<String, Class<? extends Strategy>> strategyClassMap) {
         this.strategyClassMap = strategyClassMap;
     }
 }

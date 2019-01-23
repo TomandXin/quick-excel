@@ -12,6 +12,7 @@ import com.tom.excel.executor.read.ReadExcelBaseExecutor;
 import com.tom.excel.executor.read.ReadExcelExecutor;
 import com.tom.excel.executor.read.ReadV3ExcelExecutor;
 import com.tom.excel.strategy.BaseParseStrategy;
+import com.tom.excel.strategy.Strategy;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -69,47 +70,35 @@ public class ReadExcelContext implements ExcelContext {
             throw ExcelExceptionFactory.wrapException("This Class Not Extends BaseModel", new ExcelException());
         }
         Map<Integer, String> filedNameMap = new HashMap<>(32);
-        // filed name,strategy method
-        Map<String, Method> strategyMethodMap = new HashMap<>(32);
         // filed name
         Map<String, Class<?>> strategyClassMap = new HashMap<>(32);
-        try {
-            // 封装Field信息
-            for (Field field : targetClass.getFields()) {
-                // 判断是否有注解
-                ExcelReadProperty excelReadProperty = field.getAnnotation(ExcelReadProperty.class);
-                if (null == excelReadProperty) {
-                    continue;
-                }
-                // filed index,filed name map
-                filedNameMap.putIfAbsent(excelReadProperty.columnIndex(), field.getName());
-                // 判断是否继承了BaseParseStrategy解析策略，如果继承了该策略则不做任何处理
-                if (!excelReadProperty.parseStrategy().isAssignableFrom(BaseParseStrategy.class)) {
-                    Class<?> strategyClazz = excelReadProperty.parseStrategy();
-                    Class<?>[] parameters = new Class<?>[]{String.class};
-                    Method method = strategyClazz.getMethod("parse", parameters);
-                    // filed name,strategy method
-                    strategyMethodMap.putIfAbsent(field.getName(), method);
-                    // filed name,strategy class
-                    strategyClassMap.putIfAbsent(field.getName(), strategyClazz);
-                }
+        // 封装Field信息
+        for (Field field : targetClass.getFields()) {
+            // 判断是否有注解
+            ExcelReadProperty excelReadProperty = field.getAnnotation(ExcelReadProperty.class);
+            if (null == excelReadProperty) {
+                continue;
             }
-            // ClassMeta实体类赋值
-            createClassMeta(filedNameMap, strategyMethodMap, strategyClassMap);
-
-        } catch (NoSuchMethodException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
+            // filed index,filed name map
+            filedNameMap.putIfAbsent(excelReadProperty.columnIndex(), field.getName());
+            // 判断是否继承了BaseParseStrategy解析策略，如果继承了该策略则不做任何处理
+            if (!BaseParseStrategy.class.isAssignableFrom(excelReadProperty.parseStrategy())) {
+                Class<? extends Strategy> strategyClazz = excelReadProperty.parseStrategy();
+                // filed name,strategy class
+                strategyClassMap.putIfAbsent(field.getName(), strategyClazz);
+            }
         }
+        // ClassMeta实体类赋值
+        createClassMeta(filedNameMap, strategyClassMap);
     }
 
     /**
      * 创建ClassMeta实体类
      *
      * @param filedNameMap
-     * @param strategyMethodMap
      * @param strategyClassMap
      */
-    private void createClassMeta(Map<Integer, String> filedNameMap, Map<String, Method> strategyMethodMap, Map<String, Class<?>> strategyClassMap) {
+    private void createClassMeta(Map<Integer, String> filedNameMap, Map<String, Class<?>> strategyClassMap) {
         classMeta = new ClassMeta();
         // 实体类赋值
         try {
@@ -120,8 +109,6 @@ public class ReadExcelContext implements ExcelContext {
         classMeta.setClazz(targetClass);
 
         classMeta.setFieldNameMap(filedNameMap);
-
-        classMeta.setStrategyMethodMap(strategyMethodMap);
 
         classMeta.setStrategyClassMap(strategyClassMap);
     }
@@ -135,6 +122,11 @@ public class ReadExcelContext implements ExcelContext {
         }
     }
 
+    /**
+     * 读取Excel文件内容
+     *
+     * @param excelEventListener
+     */
     public void read(ExcelEventListener excelEventListener) {
         // 设置后置处理器
         parseMessageReceiver.setExcelEventListener(excelEventListener);
@@ -142,6 +134,9 @@ public class ReadExcelContext implements ExcelContext {
         readExcelBaseExecutor.parse(this);
     }
 
+    /**
+     * 初始化消息接收者
+     */
     private void initReceiver() {
         parseMessageReceiver = new ParseMessageReceiver(classMeta);
     }

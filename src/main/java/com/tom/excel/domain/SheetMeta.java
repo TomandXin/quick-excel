@@ -26,11 +26,24 @@ public class SheetMeta {
      */
     private String sheetName;
 
+    /**
+     * 是否需要标题行
+     */
+    private boolean needHeader;
 
-    public SheetMeta(Sheet sheet, Integer currentRow, String sheetName) {
+    /**
+     * 自定义构造函数
+     *
+     * @param sheet
+     * @param currentRow
+     * @param sheetName
+     * @param needHeader
+     */
+    public SheetMeta(Sheet sheet, Integer currentRow, String sheetName, boolean needHeader) {
         this.sheet = sheet;
         this.currentRow = currentRow;
         this.sheetName = sheetName;
+        this.needHeader = needHeader;
     }
 
     public Sheet getSheet() {
@@ -55,5 +68,13 @@ public class SheetMeta {
 
     public void setSheetName(String sheetName) {
         this.sheetName = sheetName;
+    }
+
+    public boolean isNeedHeader() {
+        return needHeader;
+    }
+
+    public void setNeedHeader(boolean needHeader) {
+        this.needHeader = needHeader;
     }
 }

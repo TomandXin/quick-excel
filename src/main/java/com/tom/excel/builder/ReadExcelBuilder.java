@@ -1,7 +1,9 @@
 package com.tom.excel.builder;
 
+import com.tom.excel.context.ReadExcelContext;
 import com.tom.excel.domain.BaseModel;
 import com.tom.excel.enums.ExcelTypeEnum;
+import com.tom.excel.executor.read.ExcelEventListener;
 
 import java.io.InputStream;
 
@@ -20,12 +22,14 @@ public class ReadExcelBuilder {
 
     private Class<? extends BaseModel> modelClazz;
 
-    public void init() {
+    private ReadExcelContext readExcelContext;
 
+    public void init() {
+        readExcelContext = new ReadExcelContext(inputStream, modelClazz, excelTypeEnum);
     }
 
-    public void read() {
-
+    public void read(ExcelEventListener excelEventListener) {
+        readExcelContext.read(excelEventListener);
     }
 
     public void setInputStream(InputStream inputStream) {

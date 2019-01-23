@@ -1,7 +1,8 @@
-package com.tom.excel.sax.v3;
+package com.tom.excel.executor.v3;
 
 import com.tom.excel.domain.EventMessage;
 import com.tom.excel.executor.observer.EventFactory;
+import com.tom.excel.executor.v3.V3EventListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
@@ -20,18 +21,32 @@ import java.util.Map;
  */
 public class V3EventListenerImpl implements V3EventListener {
 
+    /**
+     *
+     */
     private SSTRecord sstRecord;
 
+    /**
+     * 存储每行的解析内容
+     */
     private Map<Integer, String> contentMap = new HashMap<>(36);
 
+    /**
+     * 每行的内容
+     */
     private String content;
 
+    /**
+     * 列号
+     */
     private int column;
 
     private int sheetNumber;
 
 
     /**
+     * 处理Record内容
+     *
      * @param record
      */
     @Override
@@ -54,7 +69,7 @@ public class V3EventListenerImpl implements V3EventListener {
             case NumberRecord.sid:
                 NumberRecord numberRecord = (NumberRecord) record;
                 // 判断是否是时间类型
-                content = DateFormatUtils.format(HSSFDateUtil.getJavaDate(numberRecord.getValue()), "");
+                content = String.valueOf(numberRecord.getValue());
                 column = numberRecord.getColumn();
                 break;
             case SSTRecord.sid:

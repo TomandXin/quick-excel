@@ -5,6 +5,7 @@ import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
 import com.tom.excel.domain.EventMessage;
 import com.tom.excel.executor.read.ExcelEventListener;
+import com.tom.excel.strategy.Strategy;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,14 +52,13 @@ public class ParseMessageReceiver implements MessageReceiver {
                 if (StringUtils.isEmpty(fieldName)) {
                     continue;
                 }
-                Method strategyMethod = classMeta.getStrategyMethodMap().get(fieldName);
-                Class<?> strategyClazz = classMeta.getStrategyClassMap().get(fieldName);
+                Class<? extends Strategy> strategyClazz = classMeta.getStrategyClassMap().get(fieldName);
                 // 如果没有对应的解析策略，则直接将content赋值该对应的Filed属性
-                if (null == strategyClazz || null == strategyMethod) {
+                if (null == strategyClazz) {
                     BeanUtils.setProperty(classMeta.getTarget(), fieldName, content);
                     continue;
                 }
-                Object valueResult = strategyMethod.invoke(strategyClazz.newInstance(), content);
+                Object valueResult = strategyClazz.newInstance().parse(content);
                 // 属性赋值
                 BeanUtils.setProperty(classMeta.getTarget(), fieldName, valueResult);
             }
@@ -69,6 +69,8 @@ public class ParseMessageReceiver implements MessageReceiver {
         } catch (InvocationTargetException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
+        // 后置处理
+        excelEventListener.postProcess(classMeta.getTarget());
     }
 
     public void setExcelEventListener(ExcelEventListener excelEventListener) {

@@ -1,6 +1,7 @@
 package com.tom.excel.annotations;
 
 import com.tom.excel.strategy.BaseParseStrategy;
+import com.tom.excel.strategy.Strategy;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.ElementType;
@@ -16,5 +17,5 @@ public @interface ExcelReadProperty {
 
     String columnName() default StringUtils.EMPTY;
 
-    Class<?> parseStrategy() default BaseParseStrategy.class;
+    Class<? extends Strategy> parseStrategy() default BaseParseStrategy.class;
 }
