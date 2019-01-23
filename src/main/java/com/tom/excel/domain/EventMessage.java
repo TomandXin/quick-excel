@@ -23,4 +23,11 @@ public class EventMessage {
     public void setRowContentMap(Map<Integer, String> rowContentMap) {
         this.rowContentMap = rowContentMap;
     }
+
+    @Override
+    public String toString() {
+        return "EventMessage{" +
+                "rowContentMap=" + rowContentMap +
+                '}';
+    }
 }

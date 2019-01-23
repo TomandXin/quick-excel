@@ -1,17 +1,29 @@
 package com.tom.excel.executor.observer;
 
-import com.tom.excel.annotations.EventReceiver;
 import com.tom.excel.domain.EventMessage;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * 事件工厂类
+ *
+ * @author tomxin
+ * @date 2019-01-24
+ * @since v1.0.0
+ */
 public class EventFactory {
 
+    /**
+     * 消息队列
+     */
     private static BlockingQueue<EventMessage> eventQueue = new LinkedBlockingQueue<>(256);
 
+    /**
+     * 消息接收者列表
+     */
     private static List<MessageReceiver> messageReceiverList = new ArrayList<>(32);
 
     /**
@@ -29,7 +41,7 @@ public class EventFactory {
     }
 
     /**
-     * 通知事件 异步阻塞队列
+     * 通知事件 异步阻塞队列 TODO 优化消息分发方式
      *
      * @param eventMessage
      */

@@ -71,7 +71,7 @@ public class ReadExcelContext implements ExcelContext {
         }
         Map<Integer, String> filedNameMap = new HashMap<>(32);
         // filed name
-        Map<String, Class<?>> strategyClassMap = new HashMap<>(32);
+        Map<String, Class<? extends Strategy>> strategyClassMap = new HashMap<>(32);
         // 封装Field信息
         for (Field field : targetClass.getFields()) {
             // 判断是否有注解
@@ -98,7 +98,7 @@ public class ReadExcelContext implements ExcelContext {
      * @param filedNameMap
      * @param strategyClassMap
      */
-    private void createClassMeta(Map<Integer, String> filedNameMap, Map<String, Class<?>> strategyClassMap) {
+    private void createClassMeta(Map<Integer, String> filedNameMap, Map<String, Class<? extends Strategy>> strategyClassMap) {
         classMeta = new ClassMeta();
         // 实体类赋值
         try {

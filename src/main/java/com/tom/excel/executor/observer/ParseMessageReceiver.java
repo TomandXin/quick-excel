@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * SAX模式下读取Excel文件内容的观察者
+ * 读取Excel文件内容的观察者
  *
  * @author tomxin
  * @date 2018-11-04
@@ -62,6 +62,9 @@ public class ParseMessageReceiver implements MessageReceiver {
                 // 属性赋值
                 BeanUtils.setProperty(classMeta.getTarget(), fieldName, valueResult);
             }
+            // 后置处理
+            excelEventListener.postProcess(classMeta.getTarget());
+            
         } catch (InstantiationException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (IllegalAccessException e) {
@@ -69,8 +72,6 @@ public class ParseMessageReceiver implements MessageReceiver {
         } catch (InvocationTargetException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
-        // 后置处理
-        excelEventListener.postProcess(classMeta.getTarget());
     }
 
     public void setExcelEventListener(ExcelEventListener excelEventListener) {

@@ -1,8 +1,7 @@
-package com.tom.excel.executor.sax;
+package com.tom.excel.executor.v7;
 
 import com.tom.excel.context.ReadExcelContext;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
-import com.tom.excel.executor.sax.ReadExcelSaxHandler;
 import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.xml.sax.SAXException;
@@ -11,7 +10,7 @@ import org.xml.sax.XMLReader;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * read sax factory
+ * read v7 factory
  *
  * @author tomxin
  * @date 2018-10-28
