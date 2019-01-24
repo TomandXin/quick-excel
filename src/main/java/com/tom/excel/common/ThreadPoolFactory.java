@@ -14,10 +14,10 @@ import java.util.concurrent.*;
 public class ThreadPoolFactory {
 
     private static ExecutorService FIX_Thread_POOl = new ThreadPoolExecutor(
+            20,
+            100,
             1,
-            1,
-            1,
-            TimeUnit.MILLISECONDS,
+            TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(256)
     );
 

@@ -3,7 +3,9 @@ package com.tom.excel.executor.observer;
 import com.tom.excel.domain.EventMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -26,6 +28,7 @@ public class EventFactory {
      */
     private static List<MessageReceiver> messageReceiverList = new ArrayList<>(32);
 
+    
     /**
      * 观察者通过该接口注册事件
      *

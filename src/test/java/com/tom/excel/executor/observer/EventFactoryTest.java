@@ -1,5 +1,6 @@
 package com.tom.excel.executor.observer;
 
+import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.domain.EventMessage;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,18 +22,29 @@ public class EventFactoryTest {
     @Test
     public void testRegister() {
         // 判断是否抛异常
+        boolean registerNull = false;
         try {
             EventFactory.register(null);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            registerNull = true;
         }
+        Assert.assertEquals(true, registerNull);
+
         // 正常插入判断List中是否存在该MessageReceiver
         EventFactory.register(new MessageReceiver() {
             @Override
             public void invoke(EventMessage eventMessage) {
-                System.out.println("EventMessage " + eventMessage);
+                System.out.println("EventMessage One " + eventMessage);
             }
         });
+
+        EventFactory.register(new MessageReceiver() {
+            @Override
+            public void invoke(EventMessage eventMessage) {
+                System.out.println("EventMessage Two " + eventMessage);
+            }
+        });
+
         EventMessage eventMessage = new EventMessage();
         Map<Integer, String> rowContentMap = new HashMap<>();
         rowContentMap.put(1, "test");
