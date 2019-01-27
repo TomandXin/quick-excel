@@ -1,13 +1,16 @@
-package com.tom.excel.executor.v7;
+package com.tom.excel.executor.read.v7;
 
 import com.tom.excel.context.ReadExcelContext;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.SAXHelper;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 /**
  * read v7 factory
@@ -22,18 +25,18 @@ public class ReadSaxFactory {
     /**
      * get sheet parser
      *
-     * @param sharedStringsTable
+     * @param xssfReader
+     * @param readExcelContext
      * @return
      */
-    public static XMLReader fetchSheetParser(SharedStringsTable sharedStringsTable, ReadExcelContext readExcelContext) {
+    public static XMLReader fetchSheetParser(XSSFReader xssfReader, ReadExcelContext readExcelContext) {
         try {
-            ReadExcelSaxHandler handler = new ReadExcelSaxHandler(sharedStringsTable, readExcelContext.getEventFactory());
+            // ShareStringsTable
+            ReadExcelSaxHandler handler = new ReadExcelSaxHandler(xssfReader.getSharedStringsTable(), xssfReader.getStylesTable(), readExcelContext.getEventFactory());
             XMLReader xmlReader = SAXHelper.newXMLReader();
             xmlReader.setContentHandler(handler);
             return xmlReader;
-        } catch (SAXException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | InvalidFormatException | ParserConfigurationException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
     }

@@ -2,12 +2,13 @@ package com.tom.excel.executor.read;
 
 import com.tom.excel.context.ReadExcelContext;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
-import com.tom.excel.executor.v7.ReadSaxFactory;
+import com.tom.excel.executor.read.v7.ReadSaxFactory;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -37,8 +38,7 @@ public class ReadExcelExecutor implements ReadExcelBaseExecutor {
             OPCPackage opcPackage = OPCPackage.open(readExcelContext.getInputStream());
             XSSFReader xssfReader = new XSSFReader(opcPackage);
             //
-            SharedStringsTable sharedStringsTable = xssfReader.getSharedStringsTable();
-            XMLReader xmlReader = ReadSaxFactory.fetchSheetParser(sharedStringsTable, readExcelContext);
+            XMLReader xmlReader = ReadSaxFactory.fetchSheetParser(xssfReader, readExcelContext);
 
             Iterator<InputStream> sheets = xssfReader.getSheetsData();
             while (sheets.hasNext()) {
@@ -46,8 +46,6 @@ public class ReadExcelExecutor implements ReadExcelBaseExecutor {
                 InputSource sheetSource = new InputSource(sheet);
                 xmlReader.parse(sheetSource);
             }
-        } catch (InvalidFormatException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (IOException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (OpenXML4JException e) {

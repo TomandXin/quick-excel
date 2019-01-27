@@ -1,14 +1,13 @@
 package com.tom.excel.executor.observer;
 
-import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.domain.EventMessage;
+import com.tom.excel.executor.event.EventFactory;
+import com.tom.excel.executor.event.MessageReceiver;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * 事件工厂类单元测试

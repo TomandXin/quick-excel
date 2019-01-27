@@ -1,13 +1,10 @@
-package com.tom.excel.executor.v3;
+package com.tom.excel.executor.read.v3;
 
 import com.tom.excel.domain.EventMessage;
-import com.tom.excel.executor.observer.EventFactory;
-import com.tom.excel.executor.v3.V3EventListener;
+import com.tom.excel.executor.event.EventFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +18,6 @@ import java.util.Map;
  */
 public class V3EventListenerImpl implements V3EventListener {
 
-    /**
-     *
-     */
     private SSTRecord sstRecord;
 
     /**
@@ -96,7 +90,7 @@ public class V3EventListenerImpl implements V3EventListener {
         }
         // 判断该行是否内容为空
         if (record instanceof LastCellOfRowDummyRecord) {
-            messageNotify(contentMap);
+            messageNotify();
             reloadProperty();
             return;
         }
@@ -109,10 +103,8 @@ public class V3EventListenerImpl implements V3EventListener {
 
     /**
      * 发送消息
-     *
-     * @param contentMap
      */
-    private void messageNotify(Map<Integer, String> contentMap) {
+    private void messageNotify() {
         EventMessage eventMessage = new EventMessage();
         eventMessage.setRowContentMap(contentMap);
         eventFactory.notify(eventMessage);

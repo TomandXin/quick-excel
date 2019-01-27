@@ -1,6 +1,5 @@
-package com.tom.excel.executor.observer;
+package com.tom.excel.executor.event;
 
-import com.tom.excel.annotations.EventReceiver;
 import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
 import com.tom.excel.domain.EventMessage;
@@ -10,7 +9,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -22,10 +20,22 @@ import java.util.Map;
  */
 public class ParseMessageReceiver implements MessageReceiver {
 
+    /**
+     * 类的元数据信息
+     */
     private ClassMeta classMeta;
 
+    /**
+     * 后置处理
+     */
     private ExcelEventListener excelEventListener;
 
+    /**
+     * 构造函数
+     *
+     * @param classMeta
+     * @param eventFactory
+     */
     public ParseMessageReceiver(ClassMeta classMeta, EventFactory eventFactory) {
         this.classMeta = classMeta;
         // 事件监听注册
