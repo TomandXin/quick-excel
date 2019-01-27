@@ -26,10 +26,10 @@ public class ParseMessageReceiver implements MessageReceiver {
 
     private ExcelEventListener excelEventListener;
 
-    public ParseMessageReceiver(ClassMeta classMeta) {
+    public ParseMessageReceiver(ClassMeta classMeta, EventFactory eventFactory) {
         this.classMeta = classMeta;
         // 事件监听注册
-        EventFactory.register(this);
+        eventFactory.register(this);
     }
 
     /**
@@ -64,7 +64,7 @@ public class ParseMessageReceiver implements MessageReceiver {
             }
             // 后置处理
             excelEventListener.postProcess(classMeta.getTarget());
-            
+
         } catch (InstantiationException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         } catch (IllegalAccessException e) {

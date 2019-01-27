@@ -3,10 +3,7 @@ package com.tom.excel.executor.observer;
 import com.tom.excel.domain.EventMessage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -21,20 +18,33 @@ public class EventFactory {
     /**
      * 消息队列
      */
-    private static BlockingQueue<EventMessage> eventQueue = new LinkedBlockingQueue<>(256);
+    private LinkedBlockingQueue<EventMessage> eventQueue;
 
     /**
      * 消息接收者列表
      */
-    private static List<MessageReceiver> messageReceiverList = new ArrayList<>(32);
+    private List<MessageReceiver> messageReceiverList;
 
-    
+    /**
+     * 获取EventFactory实例
+     *
+     * @return
+     */
+    public static EventFactory getInstance() {
+        return new EventFactory();
+    }
+
+    public EventFactory() {
+        this.messageReceiverList = new ArrayList<>(32);
+        this.eventQueue = new LinkedBlockingQueue<>(256);
+    }
+
     /**
      * 观察者通过该接口注册事件
      *
      * @param messageReceiver
      */
-    public static void register(MessageReceiver messageReceiver) {
+    public void register(MessageReceiver messageReceiver) {
         // 判空
         if (null == messageReceiver) {
             throw new NullPointerException("observer is null");
@@ -44,14 +54,14 @@ public class EventFactory {
     }
 
     /**
-     * 通知事件 异步阻塞队列 TODO 优化消息分发方式
+     * 通知事件 异步阻塞队列
      *
      * @param eventMessage
      */
-    public static void notify(EventMessage eventMessage) {
+    public void notify(EventMessage eventMessage) {
         // 先放入到阻塞队列中
         eventQueue.add(eventMessage);
-
+        // 调用消息的处理者
         EventMessage message;
         while ((message = eventQueue.poll()) != null) {
             for (MessageReceiver messageReceiver : messageReceiverList) {

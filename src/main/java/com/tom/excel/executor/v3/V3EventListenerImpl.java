@@ -43,6 +43,16 @@ public class V3EventListenerImpl implements V3EventListener {
 
     private int sheetNumber;
 
+    private EventFactory eventFactory;
+
+    /**
+     * 构造函数
+     *
+     * @param eventFactory
+     */
+    public V3EventListenerImpl(EventFactory eventFactory) {
+        this.eventFactory = eventFactory;
+    }
 
     /**
      * 处理Record内容
@@ -105,7 +115,7 @@ public class V3EventListenerImpl implements V3EventListener {
     private void messageNotify(Map<Integer, String> contentMap) {
         EventMessage eventMessage = new EventMessage();
         eventMessage.setRowContentMap(contentMap);
-        EventFactory.notify(eventMessage);
+        eventFactory.notify(eventMessage);
     }
 
     /**

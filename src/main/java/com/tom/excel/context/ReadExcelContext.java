@@ -6,6 +6,7 @@ import com.tom.excel.domain.ClassMeta;
 import com.tom.excel.enums.ExcelTypeEnum;
 import com.tom.excel.exceptions.ExcelException;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
+import com.tom.excel.executor.observer.EventFactory;
 import com.tom.excel.executor.observer.ParseMessageReceiver;
 import com.tom.excel.executor.read.ExcelEventListener;
 import com.tom.excel.executor.read.ReadExcelBaseExecutor;
@@ -41,6 +42,8 @@ public class ReadExcelContext implements ExcelContext {
 
     private ParseMessageReceiver parseMessageReceiver;
 
+    private EventFactory eventFactory;
+
     public ReadExcelContext(InputStream inputStream, Class targetClass, ExcelTypeEnum excelTypeEnum) {
         this.inputStream = inputStream;
         this.targetClass = targetClass;
@@ -53,12 +56,18 @@ public class ReadExcelContext implements ExcelContext {
      * 初始化方法
      */
     public void init() {
+        // 初始化EventFactory
+        initEventFactory();
         // 初始化执行器
         initExecutor();
         // 初始化类的元数据
         initClassMeta();
         // 初始化监听事件
         initReceiver();
+    }
+
+    private void initEventFactory() {
+        eventFactory = EventFactory.getInstance();
     }
 
     /**
@@ -138,7 +147,7 @@ public class ReadExcelContext implements ExcelContext {
      * 初始化消息接收者
      */
     private void initReceiver() {
-        parseMessageReceiver = new ParseMessageReceiver(classMeta);
+        parseMessageReceiver = new ParseMessageReceiver(classMeta, eventFactory);
     }
 
     public InputStream getInputStream() {
@@ -155,5 +164,9 @@ public class ReadExcelContext implements ExcelContext {
 
     public void setTargetClass(Class targetClass) {
         this.targetClass = targetClass;
+    }
+
+    public EventFactory getEventFactory() {
+        return this.eventFactory;
     }
 }

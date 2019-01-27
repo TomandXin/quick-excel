@@ -27,7 +27,7 @@ public class ReadSaxFactory {
      */
     public static XMLReader fetchSheetParser(SharedStringsTable sharedStringsTable, ReadExcelContext readExcelContext) {
         try {
-            ReadExcelSaxHandler handler = new ReadExcelSaxHandler(sharedStringsTable);
+            ReadExcelSaxHandler handler = new ReadExcelSaxHandler(sharedStringsTable, readExcelContext.getEventFactory());
             XMLReader xmlReader = SAXHelper.newXMLReader();
             xmlReader.setContentHandler(handler);
             return xmlReader;

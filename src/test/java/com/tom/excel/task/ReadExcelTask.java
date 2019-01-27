@@ -38,8 +38,8 @@ public class ReadExcelTask implements Runnable {
                 .with(ReadExcelBuilder::setExcelTypeEnum, ExcelTypeEnum.XLSX)
                 .with(ReadExcelBuilder::setModelClazz, StudentDO.class)
                 .with(ReadExcelBuilder::setInputStream, inputStream)
-                .build();
-        readExcelBuilder.init();
+                .build()
+                .init();
         // 读取文件内容
         readExcelBuilder.read(new ExcelEventListener() {
             @Override

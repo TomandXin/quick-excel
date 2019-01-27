@@ -31,7 +31,7 @@ public class ReadV3ExcelExecutor implements ReadExcelBaseExecutor {
             POIFSFileSystem poifsFileSystem = new POIFSFileSystem(readExcelContext.getInputStream());
             InputStream workBookInputStream = poifsFileSystem.createDocumentInputStream("Workbook");
             // 注册自定义监听器
-            V3EventListener v3EventListener = new V3EventListenerImpl();
+            V3EventListener v3EventListener = new V3EventListenerImpl(readExcelContext.getEventFactory());
             MissingRecordAwareHSSFListener missingRecordAwareHSSFListener = new MissingRecordAwareHSSFListener(v3EventListener);
 
             HSSFRequest hssfRequest = new HSSFRequest();

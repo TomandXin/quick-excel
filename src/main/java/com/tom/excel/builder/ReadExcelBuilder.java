@@ -24,8 +24,9 @@ public class ReadExcelBuilder {
 
     private ReadExcelContext readExcelContext;
 
-    public void init() {
+    public ReadExcelBuilder init() {
         readExcelContext = new ReadExcelContext(inputStream, modelClazz, excelTypeEnum);
+        return this;
     }
 
     public void read(ExcelEventListener excelEventListener) {

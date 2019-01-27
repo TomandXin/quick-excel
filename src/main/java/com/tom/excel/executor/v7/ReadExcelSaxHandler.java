@@ -68,14 +68,17 @@ public class ReadExcelSaxHandler extends DefaultHandler {
      */
     private static Pattern ROW_PATTERN = Pattern.compile("[^0-9]");
 
+    private EventFactory eventFactory;
+
 
     /**
      * destruct method
      *
      * @param sharedStringsTable
      */
-    public ReadExcelSaxHandler(SharedStringsTable sharedStringsTable) {
+    public ReadExcelSaxHandler(SharedStringsTable sharedStringsTable, EventFactory eventFactory) {
         this.sharedStringsTable = sharedStringsTable;
+        this.eventFactory = eventFactory;
     }
 
     /**
@@ -143,7 +146,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
 
         if (qName.equals("row")) {
             // TODO 标志一行已经解析结束 判断是否需要标题行
-            if (curRow == 1) {
+            if (curRow == 0) {
                 // 判断是标题栏
 
             } else {
@@ -162,7 +165,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     private void publishContent() {
         EventMessage eventMessage = new EventMessage();
         eventMessage.setRowContentMap(rowContentMap);
-        EventFactory.notify(eventMessage);
+        eventFactory.notify(eventMessage);
     }
 
     /**

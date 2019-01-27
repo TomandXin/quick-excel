@@ -23,22 +23,23 @@ public class EventFactoryTest {
     public void testRegister() {
         // 判断是否抛异常
         boolean registerNull = false;
+        EventFactory eventFactory = EventFactory.getInstance();
         try {
-            EventFactory.register(null);
+            eventFactory.register(null);
         } catch (Exception e) {
             registerNull = true;
         }
         Assert.assertEquals(true, registerNull);
 
         // 正常插入判断List中是否存在该MessageReceiver
-        EventFactory.register(new MessageReceiver() {
+        eventFactory.register(new MessageReceiver() {
             @Override
             public void invoke(EventMessage eventMessage) {
                 System.out.println("EventMessage One " + eventMessage);
             }
         });
 
-        EventFactory.register(new MessageReceiver() {
+        eventFactory.register(new MessageReceiver() {
             @Override
             public void invoke(EventMessage eventMessage) {
                 System.out.println("EventMessage Two " + eventMessage);
@@ -50,7 +51,7 @@ public class EventFactoryTest {
         rowContentMap.put(1, "test");
         eventMessage.setRowContentMap(rowContentMap);
 
-        EventFactory.notify(eventMessage);
+        eventFactory.notify(eventMessage);
     }
 
     @Test
