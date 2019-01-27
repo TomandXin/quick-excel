@@ -73,7 +73,7 @@ public class ReadExcelContext implements ExcelContext {
         // filed name
         Map<String, Class<? extends Strategy>> strategyClassMap = new HashMap<>(32);
         // 封装Field信息
-        for (Field field : targetClass.getFields()) {
+        for (Field field : targetClass.getDeclaredFields()) {
             // 判断是否有注解
             ExcelReadProperty excelReadProperty = field.getAnnotation(ExcelReadProperty.class);
             if (null == excelReadProperty) {

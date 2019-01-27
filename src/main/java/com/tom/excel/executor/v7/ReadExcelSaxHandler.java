@@ -54,6 +54,11 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     private int curRow;
 
     /**
+     * Set when an Inline String "is" is seen
+     */
+    private boolean isIsOpen;
+
+    /**
      * column pattern
      */
     private static Pattern COL_PATTERN = Pattern.compile("[0-9]");
@@ -83,6 +88,10 @@ public class ReadExcelSaxHandler extends DefaultHandler {
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        if ("is".equals(localName)) {
+            // Inline string outer tag
+            isIsOpen = true;
+        }
         if (qName.contains("c")) {
             // 获取当前列的索引位置
             String index = attributes.getValue("r");
@@ -126,12 +135,15 @@ public class ReadExcelSaxHandler extends DefaultHandler {
             nextIsString = false;
         }
         // 存储坐标
-        if (qName.equals("v")) {
+        if (localName.equals("v") || ("t".equals(localName) && isIsOpen)) {
             rowContentMap.put(curCol, lastContents);
+        } else if ("is".equals(localName)) {
+            isIsOpen = false;
         }
-        // 标志一行已经解析结束
+
         if (qName.equals("row")) {
-            if (curRow == 0) {
+            // TODO 标志一行已经解析结束 判断是否需要标题行
+            if (curRow == 1) {
                 // 判断是标题栏
 
             } else {
