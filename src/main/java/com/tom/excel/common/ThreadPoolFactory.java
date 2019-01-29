@@ -29,4 +29,10 @@ public class ThreadPoolFactory {
     public static void execute(Runnable task) {
         FIX_Thread_POOl.execute(task);
     }
+
+    public static void shutdown() {
+        if (!FIX_Thread_POOl.isShutdown()) {
+            FIX_Thread_POOl.shutdown();
+        }
+    }
 }

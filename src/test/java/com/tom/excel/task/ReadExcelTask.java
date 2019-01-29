@@ -5,6 +5,7 @@ import com.tom.excel.builder.ReadExcelBuilder;
 import com.tom.excel.enums.ExcelTypeEnum;
 import com.tom.excel.executor.read.ExcelEventListener;
 import com.tom.excel.model.StudentDO;
+import com.tom.excel.model.TeacherReadDO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,13 +31,13 @@ public class ReadExcelTask implements Runnable {
         // 读取Excel文件的InputStream
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream("/Users/sandyli/sanjin/file/test.xlsx");
+            inputStream = new FileInputStream("/Users/sandyli/sanjin/file/testNew.xlsx");
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
         ReadExcelBuilder readExcelBuilder = ExcelBuilder.of(ReadExcelBuilder::new)
                 .with(ReadExcelBuilder::setExcelTypeEnum, ExcelTypeEnum.XLSX)
-                .with(ReadExcelBuilder::setModelClazz, StudentDO.class)
+                .with(ReadExcelBuilder::setModelClazz, TeacherReadDO.class)
                 .with(ReadExcelBuilder::setInputStream, inputStream)
                 .build()
                 .init();

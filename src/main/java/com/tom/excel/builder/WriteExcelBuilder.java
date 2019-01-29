@@ -26,8 +26,9 @@ public class WriteExcelBuilder {
     /**
      * init method
      */
-    public void init() {
+    public WriteExcelBuilder init() {
         writeExcelContext = new WriteExcelContext(outputStream, excelTypeEnum);
+        return this;
     }
 
     /**
