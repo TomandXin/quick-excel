@@ -152,19 +152,7 @@ public class ReadExcelContext implements ExcelContext {
     public InputStream getInputStream() {
         return this.inputStream;
     }
-
-    public Object getTargetClass() {
-        return this.targetClass;
-    }
-
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-
-    public void setTargetClass(Class targetClass) {
-        this.targetClass = targetClass;
-    }
-
+    
     public EventFactory getEventFactory() {
         return this.eventFactory;
     }

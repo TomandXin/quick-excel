@@ -1,9 +1,9 @@
 package com.tom.excel.executor.read.v7;
 
 import com.tom.excel.common.StringUtil;
-import com.tom.excel.enums.XSSFDataType;
-import com.tom.excel.executor.event.EventFactory;
 import com.tom.excel.domain.EventMessage;
+import com.tom.excel.enums.XSSFDataTypeEnum;
+import com.tom.excel.executor.event.EventFactory;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -18,8 +18,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Read Excel Handler for SAX
@@ -64,7 +62,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     /**
      * 判断字符类型
      */
-    private XSSFDataType nextDataType;
+    private XSSFDataTypeEnum nextDataType;
 
     /**
      * 数字格式
@@ -118,15 +116,15 @@ public class ReadExcelSaxHandler extends DefaultHandler {
             String cellStyleStr = attributes.getValue(StringUtil.QNAME_S);
 
             if ("b".equals(cellType)) {
-                nextDataType = XSSFDataType.BOOLEAN;
+                nextDataType = XSSFDataTypeEnum.BOOLEAN;
             } else if ("e".equals(cellType)) {
-                nextDataType = XSSFDataType.ERROR;
+                nextDataType = XSSFDataTypeEnum.ERROR;
             } else if ("inlineStr".equals(cellType)) {
-                nextDataType = XSSFDataType.INLINE_STRING;
+                nextDataType = XSSFDataTypeEnum.INLINE_STRING;
             } else if ("s".equals(cellType)) {
-                nextDataType = XSSFDataType.SST_STRING;
+                nextDataType = XSSFDataTypeEnum.SST_STRING;
             } else if ("str".equals(cellType)) {
-                nextDataType = XSSFDataType.FORMULA;
+                nextDataType = XSSFDataTypeEnum.FORMULA;
             } else {
                 XSSFCellStyle style = null;
                 if (null != stylesTable) {

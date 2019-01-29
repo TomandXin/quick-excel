@@ -4,7 +4,6 @@ import com.tom.excel.builder.ExcelBuilder;
 import com.tom.excel.builder.ReadExcelBuilder;
 import com.tom.excel.enums.ExcelTypeEnum;
 import com.tom.excel.executor.read.ExcelEventListener;
-import com.tom.excel.model.StudentDO;
 import com.tom.excel.model.TeacherReadDO;
 
 import java.io.FileInputStream;
