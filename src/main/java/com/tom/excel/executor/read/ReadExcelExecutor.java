@@ -46,11 +46,7 @@ public class ReadExcelExecutor implements ReadExcelBaseExecutor {
                 InputSource sheetSource = new InputSource(sheet);
                 xmlReader.parse(sheetSource);
             }
-        } catch (IOException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (OpenXML4JException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (SAXException e) {
+        } catch (IOException | OpenXML4JException | SAXException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
     }

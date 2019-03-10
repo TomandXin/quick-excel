@@ -21,7 +21,7 @@ public class WriteExcelBuilderTest {
 
     @Test
     public void writeTest() throws FileNotFoundException {
-        FileOutputStream fileOutputStream = new FileOutputStream("/Users/sandyli/sanjin/file/testNew.xlsx");
+        FileOutputStream fileOutputStream = new FileOutputStream("/Users/sandyli/sanjin/file/testNew1.xlsx");
         WriteExcelBuilder writeExcelBuilder = ExcelBuilder.of(WriteExcelBuilder::new)
                 .with(WriteExcelBuilder::setExcelTypeEnum, ExcelTypeEnum.XLSX)
                 .with(WriteExcelBuilder::setOutputStream, fileOutputStream)
