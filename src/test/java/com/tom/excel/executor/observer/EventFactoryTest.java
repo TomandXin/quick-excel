@@ -1,6 +1,8 @@
 package com.tom.excel.executor.observer;
 
+import com.tom.excel.domain.ContentMeta;
 import com.tom.excel.domain.EventMessage;
+import com.tom.excel.enums.XSSFDataTypeEnum;
 import com.tom.excel.executor.event.EventFactory;
 import com.tom.excel.executor.event.MessageReceiver;
 import org.junit.Assert;
@@ -46,9 +48,13 @@ public class EventFactoryTest {
         });
 
         EventMessage eventMessage = new EventMessage();
-        Map<Integer, String> rowContentMap = new HashMap<>();
-        rowContentMap.put(1, "test");
+        Map<Integer, ContentMeta> rowContentMap = new HashMap<>();
+        ContentMeta contentMeta = new ContentMeta();
+        contentMeta.setContent("测试");
+        contentMeta.setXssfDataTypeEnum(XSSFDataTypeEnum.SST_STRING);
+        rowContentMap.put(1, contentMeta);
         eventMessage.setRowContentMap(rowContentMap);
+        eventMessage.setRowNumber(1);
 
         eventFactory.notify(eventMessage);
     }

@@ -14,20 +14,34 @@ public class EventMessage {
     /**
      * Excel中每行的内容
      */
-    private Map<Integer, String> rowContentMap;
+    private Map<Integer, ContentMeta> rowContentMap;
 
-    public Map<Integer, String> getRowContentMap() {
+    /**
+     * 行号
+     */
+    private Integer rowNumber;
+
+    public Map<Integer, ContentMeta> getRowContentMap() {
         return rowContentMap;
     }
 
-    public void setRowContentMap(Map<Integer, String> rowContentMap) {
+    public void setRowContentMap(Map<Integer, ContentMeta> rowContentMap) {
         this.rowContentMap = rowContentMap;
+    }
+
+    public Integer getRowNumber() {
+        return rowNumber;
+    }
+
+    public void setRowNumber(Integer rowNumber) {
+        this.rowNumber = rowNumber;
     }
 
     @Override
     public String toString() {
         return "EventMessage{" +
                 "rowContentMap=" + rowContentMap +
+                ", rowNumber=" + rowNumber +
                 '}';
     }
 }

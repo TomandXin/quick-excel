@@ -1,6 +1,7 @@
 package com.tom.excel.executor.event;
 
 import com.tom.excel.domain.ClassMeta;
+import com.tom.excel.domain.ContentMeta;
 import com.tom.excel.exceptions.ExcelExceptionFactory;
 import com.tom.excel.domain.EventMessage;
 import com.tom.excel.executor.read.ExcelEventListener;
@@ -49,12 +50,12 @@ public class ParseMessageReceiver implements MessageReceiver {
      */
     public void invoke(EventMessage eventMessage) {
         // 解析出的Excel内容
-        Map<Integer, String> rowContentMap = eventMessage.getRowContentMap();
+        Map<Integer, ContentMeta> rowContentMap = eventMessage.getRowContentMap();
         try {
             for (Integer index : rowContentMap.keySet()) {
-                String content = rowContentMap.get(index);
+                ContentMeta contentMeta = rowContentMap.get(index);
                 // 判空
-                if (StringUtils.isEmpty(content)) {
+                if (null == contentMeta || StringUtils.isBlank(contentMeta.getContent())) {
                     continue;
                 }
                 String fieldName = classMeta.getFieldNameMap().get(index);
@@ -65,21 +66,17 @@ public class ParseMessageReceiver implements MessageReceiver {
                 Class<? extends Strategy> strategyClazz = classMeta.getStrategyClassMap().get(fieldName);
                 // 如果没有对应的解析策略，则直接将content赋值该对应的Filed属性
                 if (null == strategyClazz) {
-                    BeanUtils.setProperty(classMeta.getTarget(), fieldName, content);
+                    BeanUtils.setProperty(classMeta.getTarget(), fieldName, contentMeta.getContent());
                     continue;
                 }
-                Object valueResult = strategyClazz.newInstance().parse(content);
+                Object valueResult = strategyClazz.newInstance().parse(contentMeta);
                 // 属性赋值
                 BeanUtils.setProperty(classMeta.getTarget(), fieldName, valueResult);
             }
             // 后置处理
             excelEventListener.postProcess(classMeta.getTarget());
 
-        } catch (InstantiationException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
     }

@@ -1,6 +1,8 @@
 package com.tom.excel.executor.read.v3;
 
+import com.tom.excel.domain.ContentMeta;
 import com.tom.excel.domain.EventMessage;
+import com.tom.excel.enums.XSSFDataTypeEnum;
 import com.tom.excel.executor.event.EventFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
@@ -23,7 +25,7 @@ public class V3EventListenerImpl implements V3EventListener {
     /**
      * 存储每行的解析内容
      */
-    private Map<Integer, String> contentMap = new HashMap<>(36);
+    private Map<Integer, ContentMeta> contentMap = new HashMap<>(36);
 
     /**
      * 每行的内容
@@ -36,6 +38,8 @@ public class V3EventListenerImpl implements V3EventListener {
     private int column;
 
     private int sheetNumber;
+
+    private Integer rowNumber;
 
     private EventFactory eventFactory;
 
@@ -55,26 +59,26 @@ public class V3EventListenerImpl implements V3EventListener {
      */
     @Override
     public void processRecord(Record record) {
+        XSSFDataTypeEnum xssfDataTypeEnum = XSSFDataTypeEnum.SST_STRING;
         // 判断Record的类型
         switch (record.getSid()) {
             case BOFRecord.sid:
                 BOFRecord bofRecord = (BOFRecord) record;
                 // 判断是否是worksheet
                 if (bofRecord.getType() == BOFRecord.TYPE_WORKSHEET) {
-                    System.out.println();
                 }
                 break;
             case RowRecord.sid:
                 RowRecord rowRecord = (RowRecord) record;
                 // 当前行信息
-                rowRecord.getLastCol();
-                rowRecord.getFirstCol();
+                rowNumber = rowRecord.getRowNumber();
                 break;
             case NumberRecord.sid:
                 NumberRecord numberRecord = (NumberRecord) record;
                 // 判断是否是时间类型
                 content = String.valueOf(numberRecord.getValue());
                 column = numberRecord.getColumn();
+                xssfDataTypeEnum = XSSFDataTypeEnum.NUMBER;
                 break;
             case SSTRecord.sid:
                 sstRecord = (SSTRecord) record;
@@ -98,7 +102,10 @@ public class V3EventListenerImpl implements V3EventListener {
         if (StringUtils.isEmpty(content)) {
             return;
         }
-        contentMap.put(column, content);
+        ContentMeta contentMeta = new ContentMeta();
+        contentMeta.setContent(content);
+        contentMeta.setXssfDataTypeEnum(xssfDataTypeEnum);
+        contentMap.put(column, contentMeta);
     }
 
     /**
@@ -107,6 +114,7 @@ public class V3EventListenerImpl implements V3EventListener {
     private void messageNotify() {
         EventMessage eventMessage = new EventMessage();
         eventMessage.setRowContentMap(contentMap);
+        eventMessage.setRowNumber(rowNumber);
         eventFactory.notify(eventMessage);
     }
 
@@ -116,6 +124,8 @@ public class V3EventListenerImpl implements V3EventListener {
     private void reloadProperty() {
         // 列值清空
         column = 0;
+        // 行值清空
+        rowNumber = 0;
         // 单元格内容清空
         content = StringUtils.EMPTY;
         // 行内容清空

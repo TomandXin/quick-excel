@@ -56,18 +56,14 @@ public class WriteExcelExecutor implements WriteExcelBaseExecutor {
                 }
                 ++rowNum;
             }
-        } catch (IllegalAccessException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (NoSuchMethodException e) {
-            throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw ExcelExceptionFactory.wrapException(e.getMessage(), e);
         }
         return true;
     }
 
     /**
-     * 创建标题行,标题行Style TODO
+     * 创建标题行,标题行Style
      *
      * @param excelContext
      * @param sheetMeta

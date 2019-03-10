@@ -1,6 +1,7 @@
 package com.tom.excel.executor.read.v7;
 
 import com.tom.excel.common.StringUtil;
+import com.tom.excel.domain.ContentMeta;
 import com.tom.excel.domain.EventMessage;
 import com.tom.excel.enums.XSSFDataTypeEnum;
 import com.tom.excel.executor.event.EventFactory;
@@ -39,7 +40,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     /**
      * row's col content
      */
-    private Map<Integer, String> rowContentMap = new HashMap<>(36);
+    private Map<Integer, ContentMeta> rowContentMap = new HashMap<>(36);
 
     /**
      * current column number
@@ -198,7 +199,10 @@ public class ReadExcelSaxHandler extends DefaultHandler {
                 default:
                     break;
             }
-            rowContentMap.put(curCol, thisStr);
+            ContentMeta contentMeta = new ContentMeta();
+            contentMeta.setContent(thisStr);
+            contentMeta.setXssfDataTypeEnum(nextDataType);
+            rowContentMap.put(curCol, contentMeta);
         } else if (StringUtil.LOCAL_NAME_IS.equals(localName)) {
             isIsOpen = false;
         }
@@ -244,6 +248,7 @@ public class ReadExcelSaxHandler extends DefaultHandler {
     private void messageNotify() {
         EventMessage eventMessage = new EventMessage();
         eventMessage.setRowContentMap(rowContentMap);
+        eventMessage.setRowNumber(curRow + 1);
         eventFactory.notify(eventMessage);
     }
 
